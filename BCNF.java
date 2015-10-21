@@ -10,9 +10,31 @@ public class BCNF {
 	if (attributeSet == null || functionalDependencies == null) {
 		return null;
 	}
+
+	// Create a new set for decomposition
+	Set<AttributeSet> setOfAttributeSet = new HashSet<>();
+
+	// Copy an attribute set
+	AttributeSet attributeSetCopy = new AttributeSet(attributeSet);
+	int violates = 0;
+	// Initialize decomposing set of attributes
+	setOfAttributeSet.add(attributeSetCopy);
+
+	do {
+		violates = 0;
+		for (FunctionalDependency dependency : functionalDependencies) {
+			AttributeSet independent = dependency.independent();
+			AttributeSet independentClosure = BCNF.closure(independent, functionalDependencies);
+			// If independent's closure does not equal to attributeSet, it is not a super key
+			if (!attributeSetCopy.equals(independentClosure)) {
+				violates++;
+				
+			}
+		}
+	} while (violates != 0);
 	
 
-	return Collections.emptySet();
+	return setOfAttributeSet;
   }
 
   /**
