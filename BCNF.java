@@ -12,29 +12,57 @@ public class BCNF {
 	}
 
 	// Create a new set for decomposition
-	Set<AttributeSet> setOfAttributeSet = new HashSet<>();
+	Map<AttributeSet, Set<FunctionalDependency>> setDependencyMap = new HashMap<>();
 
 	// Copy an attribute set
 	AttributeSet attributeSetCopy = new AttributeSet(attributeSet);
-	int violates = 0;
 	// Initialize decomposing set of attributes
-	setOfAttributeSet.add(attributeSetCopy);
+	setDependencyMap.put(attributeSetCopy, functionalDependencies);
+	boolean violated = false;
 
 	do {
-		violates = 0;
-		for (FunctionalDependency dependency : functionalDependencies) {
-			AttributeSet independent = dependency.independent();
-			AttributeSet independentClosure = BCNF.closure(independent, functionalDependencies);
-			// If independent's closure does not equal to attributeSet, it is not a super key
-			if (!attributeSetCopy.equals(independentClosure)) {
-				violates++;
-				
+		violated = false;
+		attributeSetIterator = setDependencyMap.keySet().iterator();
+		while(attributeSetIterator.hasNext()) {
+			AttributeSet attrSet = attributeSetIterator.next();
+			Set<FunctionalDependency> setFunctionalDependencies = setDependencyMap.get(attrSet);
+			Iterator<FunctionalDependency> dependencyIterator = setFunctionalDependencies.iterator();
+			while (dependencyIterator.hasNext()) {
+				FunctionalDependency dependency = dependencyIterator.next();
+				AttributeSet independent = dependency.independent();
+				AttributeSet independentClosure = BCNF.closure(independent, setFunctionalDependencies);
+				// If independent's closure does not equal to attributeSet, it is not a super key
+				if (!attrSet.equals(independentClosure)) {
+					violated = true;
+					// Modify map
+					AttributeSet dependent = dependency.dependent();
+					Iterator<AttributeSet> dependentIterator = dependent.iterator();
+					// Add both independent and dependent to the new attribute set
+					AttributeSet newAttributeSet = new AttributeSet(independent);
+					while (dependentIterator.hasNext()) {
+						newAttributeSet.addAttribute(dependentIterator.next());
+					}
+					setDependencyMap.put(newAttributeSet, dependency);
+					// Remove current dependency from previous set
+					dependencyIterator.remove();
+					// Remove elements from current attrSet
+					Iterator<Attribute> attributeIterator = attrSet.iterator();
+					while (attributeIterator.hasNext()) {
+						Attribute attribute = attributeIterator.next();
+						if (dependent.contains(attribute)) {
+							attributeIterator.remove();
+						}
+					}
+					break;
+				}
+			}
+			if (violated == true) {
+				break;
 			}
 		}
-	} while (violates != 0);
+	} while (violated != false);
 	
-
-	return setOfAttributeSet;
+	return setDependencyMap.keySet();
   }
 
   /**

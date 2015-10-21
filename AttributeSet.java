@@ -48,12 +48,12 @@ public class AttributeSet {
 			Set<Attribute> set = new HashSet<>();
 			Iterator<Attribute> attributeIterator = other.iterator();
 			// Put other's attributes to a hashset
-			while (iterator.hasNext()) {
+			while (attributeIterator.hasNext()) {
 				set.add(iterator.next());
 			}
 			attributeIterator = this.iterator();
 			// Check if every element in the set
-			while (iterator.hasNext()) {
+			while (attributeIterator.hasNext()) {
 				if (!set.contains(attributeIterator.next()) {
 					return false;
 				}
