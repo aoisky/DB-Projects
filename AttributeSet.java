@@ -44,17 +44,16 @@ public class AttributeSet {
 			return false;
 		} else {
 			// Compare two sets
-			int size = this.size();
 			Set<Attribute> set = new HashSet<>();
-			Iterator<Attribute> attributeIterator = other.iterator();
-			// Put other's attributes to a hashset
+			Iterator<Attribute> attributeIterator = otherSet.iterator();
+			// Put other's attributes to a hashSet
 			while (attributeIterator.hasNext()) {
-				set.add(iterator.next());
+				set.add(attributeIterator.next());
 			}
 			attributeIterator = this.iterator();
 			// Check if every element in the set
 			while (attributeIterator.hasNext()) {
-				if (!set.contains(attributeIterator.next()) {
+				if (!set.contains(attributeIterator.next())) {
 					return false;
 				}
 			}

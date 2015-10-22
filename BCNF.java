@@ -18,11 +18,11 @@ public class BCNF {
 	AttributeSet attributeSetCopy = new AttributeSet(attributeSet);
 	// Initialize decomposing set of attributes
 	setDependencyMap.put(attributeSetCopy, functionalDependencies);
-	boolean violated = false;
+	boolean violated;
 
 	do {
 		violated = false;
-		attributeSetIterator = setDependencyMap.keySet().iterator();
+		Iterator<AttributeSet> attributeSetIterator = setDependencyMap.keySet().iterator();
 		while(attributeSetIterator.hasNext()) {
 			AttributeSet attrSet = attributeSetIterator.next();
 			Set<FunctionalDependency> setFunctionalDependencies = setDependencyMap.get(attrSet);
@@ -36,13 +36,15 @@ public class BCNF {
 					violated = true;
 					// Modify map
 					AttributeSet dependent = dependency.dependent();
-					Iterator<AttributeSet> dependentIterator = dependent.iterator();
+					Iterator<Attribute> dependentIterator = dependent.iterator();
 					// Add both independent and dependent to the new attribute set
 					AttributeSet newAttributeSet = new AttributeSet(independent);
 					while (dependentIterator.hasNext()) {
 						newAttributeSet.addAttribute(dependentIterator.next());
 					}
-					setDependencyMap.put(newAttributeSet, dependency);
+					Set<FunctionalDependency> newDependencySet = new HashSet<>();
+					newDependencySet.add(dependency);
+					setDependencyMap.put(newAttributeSet, newDependencySet);
 					// Remove current dependency from previous set
 					dependencyIterator.remove();
 					// Remove elements from current attrSet
@@ -56,11 +58,11 @@ public class BCNF {
 					break;
 				}
 			}
-			if (violated == true) {
+			if (violated) {
 				break;
 			}
 		}
-	} while (violated != false);
+	} while (violated);
 	
 	return setDependencyMap.keySet();
   }
@@ -75,7 +77,7 @@ public class BCNF {
 	}
 
 	AttributeSet closure = new AttributeSet(attributeSet);
-	int closureSize = closure.size();
+	int closureSize;
 
 	do {
 		closureSize = closure.size();
