@@ -1,5 +1,5 @@
 import org.junit.Test;
-
+import java.util.Iterator;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -78,6 +78,74 @@ public class BCNFTest {
                 assertTrue("A->B and C->D", (as.contains(new Attribute("a")) && as.contains(new Attribute("b"))) || (as.contains(new Attribute("c")) && as.contains(new Attribute("d"))));
             }
         }
+    }
+
+    @org.junit.Test
+    public void testSimpleBCNF3() {
+        AttributeSet attrs = new AttributeSet();
+        attrs.addAttribute(new Attribute("a"));
+        attrs.addAttribute(new Attribute("b"));
+        attrs.addAttribute(new Attribute("d"));
+        attrs.addAttribute(new Attribute("c"));
+        attrs.addAttribute(new Attribute("f"));
+        attrs.addAttribute(new Attribute("g"));
+        attrs.addAttribute(new Attribute("e"));
+        attrs.addAttribute(new Attribute("h"));
+
+
+        Set<FunctionalDependency> fds = new HashSet<>();
+        AttributeSet ind = new AttributeSet();
+        AttributeSet dep = new AttributeSet();
+        ind.addAttribute(new Attribute("b"));
+        dep.addAttribute(new Attribute("c"));
+        dep.addAttribute(new Attribute("d"));
+        FunctionalDependency fd = new FunctionalDependency(ind, dep);
+        fds.add(fd);
+
+        ind = new AttributeSet();
+        dep = new AttributeSet();
+        ind.addAttribute(new Attribute("b"));
+        ind.addAttribute(new Attribute("f"));
+        dep.addAttribute(new Attribute("h"));
+        fd = new FunctionalDependency(ind, dep);
+        fds.add(fd);
+
+        ind = new AttributeSet();
+        dep = new AttributeSet();
+        ind.addAttribute(new Attribute("c"));
+        dep.addAttribute(new Attribute("a"));
+        dep.addAttribute(new Attribute("g"));
+        fd = new FunctionalDependency(ind, dep);
+        fds.add(fd);
+
+        ind = new AttributeSet();
+        dep = new AttributeSet();
+        ind.addAttribute(new Attribute("c"));
+        ind.addAttribute(new Attribute("e"));
+        ind.addAttribute(new Attribute("h"));
+        dep.addAttribute(new Attribute("f"));
+        fd = new FunctionalDependency(ind, dep);
+        fds.add(fd);
+
+        ind = new AttributeSet();
+        dep = new AttributeSet();
+        ind.addAttribute(new Attribute("c"));
+        ind.addAttribute(new Attribute("h"));
+        dep.addAttribute(new Attribute("b"));
+        fd = new FunctionalDependency(ind, dep);
+        fds.add(fd);
+
+        Set<AttributeSet> bcnf = BCNF.decompose(attrs, fds);
+        assertEquals("Incorrect number of tables", 6, bcnf.size());
+        for (AttributeSet as : bcnf) {
+            Iterator<Attribute> attributeIterator = as.iterator();
+            while (attributeIterator.hasNext()) {
+                System.out.print(attributeIterator.next());
+            }
+            System.out.println();
+            //assertTrue(as.size() == 3);
+        }
+
     }
 
 }
