@@ -43,6 +43,7 @@ public class BCNFTest {
 
     @org.junit.Test
     public void testSimpleBCNF2() {
+        // A custom test written by aoisky
         AttributeSet attrs = new AttributeSet();
         attrs.addAttribute(new Attribute("a"));
         attrs.addAttribute(new Attribute("c"));

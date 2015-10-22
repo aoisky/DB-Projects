@@ -7,17 +7,19 @@ public class BCNF {
    **/
   public static Set<AttributeSet> decompose(AttributeSet attributeSet,
                                             Set<FunctionalDependency> functionalDependencies) {
+      // If attribute set is null or functional dependencies are null
 	if (attributeSet == null || functionalDependencies == null) {
 		return null;
 	}
 
-	// Create a new set for decomposition
+	// Create a new map for decomposition
 	Map<AttributeSet, Set<FunctionalDependency>> setDependencyMap = new HashMap<>();
 
 	// Copy an attribute set
 	AttributeSet attributeSetCopy = new AttributeSet(attributeSet);
 	// Initialize decomposing set of attributes
 	setDependencyMap.put(attributeSetCopy, functionalDependencies);
+      // Save a violated flag
 	boolean violated;
 
 	do {
@@ -31,7 +33,7 @@ public class BCNF {
 				FunctionalDependency dependency = dependencyIterator.next();
 				AttributeSet independent = dependency.independent();
 				AttributeSet independentClosure = BCNF.closure(independent, setFunctionalDependencies);
-				// If independent's closure does not equal to attributeSet, it is not a super key
+				// If independent's closure does not equal to attributeSet, it is not a super key, then violates BCNF
 				if (!attrSet.equals(independentClosure)) {
 					violated = true;
 					// Modify map
@@ -76,6 +78,7 @@ public class BCNF {
 		return null;
 	}
 
+      // Initialize closure attribute set
 	AttributeSet closure = new AttributeSet(attributeSet);
 	int closureSize;
 
