@@ -53,8 +53,11 @@ public class AttributeSet {
 			attributeIterator = this.iterator();
 			// Check if every element in the set
 			while (attributeIterator.hasNext()) {
-				if (!set.contains(attributeIterator.next())) {
+				Attribute temp = attributeIterator.next();
+				if (!set.contains(temp)) {
 					return false;
+				} else {
+					set.remove(temp);
 				}
 			}
 			return true;
