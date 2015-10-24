@@ -76,4 +76,9 @@ public class AttributeSet {
 
 		return out;
 	}
+	
+	public void deleteAttribute(Attribute a) {
+		if(!_attributes.contains(a))
+			_attributes.remove(a);
+	}
 }

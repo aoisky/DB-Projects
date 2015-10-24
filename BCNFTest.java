@@ -9,7 +9,7 @@ public class BCNFTest {
   /**
    * Performs a basic test on a simple table.
    * gives input attributes (a,b,c) and functional dependency a->c
-   * and expects output (a,c),(b,c) or any reordering
+   * and expects output (a,c),(a,c) or any reordering
    **/
   @org.junit.Test
   public void testSimpleBCNF() {
@@ -30,6 +30,12 @@ public class BCNFTest {
 
     //run client code
     Set<AttributeSet> bcnf = BCNF.decompose(attrs, fds);
+    
+    System.out.println("Number of SubSets = " + bcnf.size());
+
+    for(AttributeSet as : bcnf) {
+    	System.out.println("Set: " + as.toString());
+    }
 
     //verify output
     assertEquals("Incorrect number of tables", 2, bcnf.size());
