@@ -42,6 +42,7 @@ public class BCNF {
 			return null;
 		}
 		Set<AttributeSet> result = new HashSet<AttributeSet>();
+		Set<AttributeSet> resultTwo = new HashSet<AttributeSet>();
 		//test
 		System.out.println("calling findSubset with : " + attributeSet.toString());
 		HashSet<AttributeSet> allSubSets = findSubset(attributeSet);
@@ -61,7 +62,7 @@ public class BCNF {
 			// if not equal
 			if (!closuredSet.equals(mySet)) {
 				
-				allSubSets.add(closuredSet);
+				result = decompose(closuredSet, functionalDependencies);
 				//Find the complement
 				Iterator<Attribute> closuredSetIterator = closuredSet.iterator();
 				Iterator<Attribute> mySetIterator = mySet.iterator();
@@ -72,9 +73,12 @@ public class BCNF {
 				while (mySetIterator.hasNext()){
 					newAttributes.addAttribute(mySetIterator.next());
 				}
-				allSubSets.add(newAttributes);
+				resultTwo = decompose(newAttributes, functionalDependencies);
+				result.addAll(resultTwo); 
+				return result;
 			}
 		}
+		result.add(attributeSet);
 		return result;
 	}
 
