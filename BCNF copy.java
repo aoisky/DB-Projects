@@ -24,15 +24,21 @@ public class BCNF {
 
 	do {
 		violated = false;
+		// an iterator gives out attributes set (initial one)
 		Iterator<AttributeSet> attributeSetIterator = setDependencyMap.keySet().iterator();
+		// If any attribute is not done
 		while(attributeSetIterator.hasNext()) {
+			// get a pair of attr set and fd 
 			AttributeSet attrSet = attributeSetIterator.next();
 			Set<FunctionalDependency> setFunctionalDependencies = setDependencyMap.get(attrSet);
 			Iterator<FunctionalDependency> dependencyIterator = setFunctionalDependencies.iterator();
+			// check for each fd
 			while (dependencyIterator.hasNext()) {
+				
 				FunctionalDependency dependency = dependencyIterator.next();
 				AttributeSet independent = dependency.independent();
 				AttributeSet independentClosure = BCNF.closure(independent, setFunctionalDependencies);
+				
 				// If independent's closure does not equal to attributeSet, it is not a super key, then violates BCNF
 				if (!attrSet.equals(independentClosure)) {
 					violated = true;
@@ -81,6 +87,10 @@ public class BCNF {
       // Initialize closure attribute set
 	AttributeSet closure = new AttributeSet(attributeSet);
 	int closureSize;
+	
+//	// Test
+//	System.out.println("Closure Function");
+//	System.out.println("AttributeSet: " + closure.toString());
 
 	do {
 		closureSize = closure.size();
@@ -113,6 +123,9 @@ public class BCNF {
 		}
 
 	} while (closureSize != closure.size());
+	
+//	// Test
+//	System.out.println("--After: " + closure.toString());
 	return closure;
   }
 }

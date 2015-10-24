@@ -5,12 +5,40 @@ public class BCNF {
   /**
    * Implement your algorithm here
    **/
-  public static Set<AttributeSet> decompose(AttributeSet attributeSet,
+  
+	public static ArrayList<ArrayList<Attribute>> findSubset(AttributeSet attributeSet){
+		ArrayList<ArrayList<Attribute>> result = new ArrayList<>();
+		
+		ArrayList<Attribute> myList = new ArrayList<>();
+		Iterator<Attribute> attrIterator = attributeSet.iterator();
+		while (attrIterator.hasNext()) {
+			myList.add(attrIterator.next());
+		}
+		ArrayList<Attribute> newList = new ArrayList<>();
+		allSubHelper(myList, newList, 0, result);
+		
+		return result;
+	}
+	
+	public static void allSubHelper(List<Attribute> myList, ArrayList<Attribute> newList, int index, ArrayList<ArrayList<Attribute>> result){
+		if (index >= myList.size()) {
+			result.add(newList);
+		} else {
+			allSubHelper(myList, newList, index + 1, result);
+			ArrayList<Attribute> newListAdded = new ArrayList(newList);
+			newListAdded.add(myList.get(index));
+			allSubHelper(myList, newListAdded, index + 1, result);
+		}
+	}
+	
+	public static Set<AttributeSet> decompose(AttributeSet attributeSet,
                                             Set<FunctionalDependency> functionalDependencies) {
       // If attribute set is null or functional dependencies are null
 	if (attributeSet == null || functionalDependencies == null) {
 		return null;
 	}
+	
+	
 
 	// Create a new map for decomposition
 	Map<AttributeSet, Set<FunctionalDependency>> setDependencyMap = new HashMap<>();
@@ -32,12 +60,13 @@ public class BCNF {
 			AttributeSet attrSet = attributeSetIterator.next();
 			Set<FunctionalDependency> setFunctionalDependencies = setDependencyMap.get(attrSet);
 			Iterator<FunctionalDependency> dependencyIterator = setFunctionalDependencies.iterator();
-			// check for each fds
+			// check for each fd
 			while (dependencyIterator.hasNext()) {
 				
 				FunctionalDependency dependency = dependencyIterator.next();
 				AttributeSet independent = dependency.independent();
 				AttributeSet independentClosure = BCNF.closure(independent, setFunctionalDependencies);
+				
 				// If independent's closure does not equal to attributeSet, it is not a super key, then violates BCNF
 				if (!attrSet.equals(independentClosure)) {
 					violated = true;
