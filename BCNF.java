@@ -46,6 +46,33 @@ public class BCNF {
 		//test
 		System.out.println("calling findSubset with : " + attributeSet.toString());
 		HashSet<AttributeSet> allSubSets = findSubset(attributeSet);
+		HashSet<FunctionalDependency> myDependencies = new HashSet<FunctionalDependency>(functionalDependencies);
+		Iterator<FunctionalDependency> depIterator = myDependencies.iterator();
+		while ( depIterator.hasNext()){
+			FunctionalDependency dep = depIterator.next();
+			AttributeSet independent = dep.independent();
+            Iterator<Attribute> independentIterator = independent.iterator();
+            AttributeSet dependent = dep.dependent();
+            Iterator<Attribute> dependentIterator = dependent.iterator();
+            // For each attribute A in W
+            while (true){
+            	if (independentIterator.hasNext()) {
+	                Attribute independentAttribute = independentIterator.next();
+	                if (!attributeSet.contains(independentAttribute)){
+	                	depIterator.remove();
+	                	break;
+	                } 
+            	} else if (dependentIterator.hasNext()) {
+            		Attribute dependentAttribute = dependentIterator.next();
+            		if (!attributeSet.contains(dependentAttribute)){
+            			depIterator.remove();
+            			break;
+            		}
+                } else {
+                	break;
+                }
+            }
+		}
 		System.out.println("Result is : " + allSubSets.toString());
 		
 		Iterator<AttributeSet> allSubSetIterator = allSubSets.iterator();
@@ -57,12 +84,17 @@ public class BCNF {
 			// Get a Subset
 			AttributeSet mySet = allSubSetIterator.next();
 			// Find its closure
-			AttributeSet closuredSet = closure(mySet, functionalDependencies);
+			AttributeSet closuredSet = closureMethod(mySet, myDependencies);
 			// Check if the closure is the same as the original
 			// if not equal
-			if (!closuredSet.equals(mySet)) {
-				
-				result = decompose(closuredSet, functionalDependencies);
+			if (!closuredSet.equals(mySet) && !closuredSet.equals(attributeSet)) {
+				Iterator<FunctionalDependency> newdepIterator = myDependencies.iterator();
+				String out = "";
+				while(newdepIterator.hasNext())
+					out += newdepIterator.next().toString() + "\t";
+				System.out.println("--calling 1: " + closuredSet.toString());
+				System.out.println("--with    1: " + out);
+				result = decompose(closuredSet, myDependencies);
 				//Find the complement
 				Iterator<Attribute> closuredSetIterator = closuredSet.iterator();
 				Iterator<Attribute> mySetIterator = mySet.iterator();
@@ -70,10 +102,13 @@ public class BCNF {
 				while (closuredSetIterator.hasNext()){
 					newAttributes.deleteAttribute(closuredSetIterator.next());
 				}
+				System.out.println("--del: " + newAttributes.toString());
 				while (mySetIterator.hasNext()){
 					newAttributes.addAttribute(mySetIterator.next());
 				}
-				resultTwo = decompose(newAttributes, functionalDependencies);
+				System.out.println("--add: " + newAttributes.toString());
+				System.out.println("--calling 2: " + newAttributes.toString());
+				resultTwo = decompose(newAttributes, myDependencies);
 				result.addAll(resultTwo); 
 				return result;
 			}
@@ -143,7 +178,8 @@ public class BCNF {
 	        if (attributeSet == null || functionalDependencies == null) {
 	            return null;
 	        }
-	
+	        // Test
+			 System.out.println("Before: " + attributeSet.toString());
 	        // Initialization
 	        Map<Attribute, List<FunctionalDependency>> listMap = new HashMap<>();
 	        Map<FunctionalDependency, Integer> countMap = new HashMap<>();
@@ -205,6 +241,8 @@ public class BCNF {
 	                }
 	            }
 	        }
+	        // Test
+	        System.out.println("After: " + newDependency.toString());
 	        return newDependency;
     }
 }
