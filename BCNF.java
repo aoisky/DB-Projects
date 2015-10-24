@@ -137,4 +137,74 @@ public class BCNF {
 		 System.out.println("After: " + closure.toString());
 		return closure;
 	}
+	
+	// Another implemented closure algorithm on the textbook
+	public static AttributeSet closureMethod(AttributeSet attributeSet, Set<FunctionalDependency> functionalDependencies) {
+	        if (attributeSet == null || functionalDependencies == null) {
+	            return null;
+	        }
+	
+	        // Initialization
+	        Map<Attribute, List<FunctionalDependency>> listMap = new HashMap<>();
+	        Map<FunctionalDependency, Integer> countMap = new HashMap<>();
+	        // For each FD in F
+	        for (FunctionalDependency dependency : functionalDependencies) {
+	            AttributeSet independent = dependency.independent();
+	            countMap.put(dependency, independent.size());
+	            Iterator<Attribute> independentIterator = independent.iterator();
+	            // For each attribute A in W
+	            while (independentIterator.hasNext()) {
+	                Attribute independentAttribute = independentIterator.next();
+	                if (listMap.containsKey(independentAttribute)) {
+	                    List<FunctionalDependency> fdList = listMap.get(independentAttribute);
+	                    fdList.add(dependency);
+	                } else {
+	                    List<FunctionalDependency> fdList = new ArrayList<>();
+	                    fdList.add(dependency);
+	                    listMap.put(independentAttribute, fdList);
+	                }
+	            }
+	        }
+	
+	        AttributeSet newDependency = new AttributeSet(attributeSet);
+	        AttributeSet update = new AttributeSet(attributeSet);
+	
+	        //Computation
+	        while (update.size() > 0) {
+	            Iterator<Attribute> updateIterator = update.iterator();
+	            // Choose a value from update
+	            Attribute updateAttr = updateIterator.next();
+	            // Update = Update - A
+	            updateIterator.remove();
+	            List<FunctionalDependency> fdList = listMap.get(updateAttr);
+	            // If update attr is not in the functional dependency, just continue;
+	            if (fdList == null) continue;
+	            // For each FD in A
+	            for (FunctionalDependency fd : fdList) {
+	                // Count[W->Z] = COUNT[W->Z] - 1
+	                countMap.put(fd, countMap.get(fd) - 1);
+	                if (countMap.get(fd) == 0) {
+	                    AttributeSet addSet = new AttributeSet(fd.dependent());
+	                    // ADD = Z-NEWDEP
+	                    Iterator<Attribute> newDependencyIterator = newDependency.iterator();
+	                    while(newDependencyIterator.hasNext()) {
+	                        Attribute newDependencyAttr = newDependencyIterator.next();
+	                        if (addSet.contains(newDependencyAttr)) {
+	                            // Delete attribute
+	                            addSet.deleteAttribute(newDependencyAttr);
+	                        }
+	                    }
+	                    // New dependency = new dependency U Add
+	                    // Update = Update U Add
+	                    Iterator<Attribute> addSetIterator = addSet.iterator();
+	                    while (addSetIterator.hasNext()) {
+	                        Attribute addAttribute = addSetIterator.next();
+	                        newDependency.addAttribute(addAttribute);
+	                        update.addAttribute(addAttribute);
+	                    }
+	                }
+	            }
+	        }
+	        return newDependency;
+    }
 }
