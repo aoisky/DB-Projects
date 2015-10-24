@@ -37,8 +37,6 @@ public class BCNF {
 	if (attributeSet == null || functionalDependencies == null) {
 		return null;
 	}
-	
-	
 
 	// Create a new map for decomposition
 	Map<AttributeSet, Set<FunctionalDependency>> setDependencyMap = new HashMap<>();
