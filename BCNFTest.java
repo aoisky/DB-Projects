@@ -56,22 +56,40 @@ public class BCNFTest {
         attrs.addAttribute(new Attribute("b"));
         attrs.addAttribute(new Attribute("d"));
         attrs.addAttribute(new Attribute("e"));
+        attrs.addAttribute(new Attribute("f"));
+        attrs.addAttribute(new Attribute("g"));
+//        attrs.addAttribute(new Attribute("e"));
 
         Set<FunctionalDependency> fds = new HashSet<>();
         AttributeSet ind = new AttributeSet();
         AttributeSet dep = new AttributeSet();
-        ind.addAttribute(new Attribute("a"));
+        ind.addAttribute(new Attribute("h"));
         dep.addAttribute(new Attribute("b"));
+        dep.addAttribute(new Attribute("c"));
         FunctionalDependency fd = new FunctionalDependency(ind, dep);
         fds.add(fd);
         ind = new AttributeSet();
         dep = new AttributeSet();
-        ind.addAttribute(new Attribute("c"));
-        dep.addAttribute(new Attribute("d"));
+        ind.addAttribute(new Attribute("a"));
+        ind.addAttribute(new Attribute("h"));
+        dep.addAttribute(new Attribute("e"));
+        fd = new FunctionalDependency(ind, dep);
+        fds.add(fd);
+        ind = new AttributeSet();
+        dep = new AttributeSet();
+        ind.addAttribute(new Attribute("b"));
+        dep.addAttribute(new Attribute("h"));
+        dep.addAttribute(new Attribute("c"));
         fd = new FunctionalDependency(ind, dep);
         fds.add(fd);
 
         Set<AttributeSet> bcnf = BCNF.decompose(attrs, fds);
+        
+        System.out.println("Number of SubSets = " + bcnf.size());
+
+        for(AttributeSet as : bcnf) {
+        	System.out.println("Set: " + as.toString());
+        }
 
         assertEquals("Incorrect number of tables", 3, bcnf.size());
         for (AttributeSet as : bcnf) {
