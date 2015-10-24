@@ -6,48 +6,76 @@ public class BCNF {
 	 * Implement your algorithm here
 	 **/
 
-	public static HashSet<HashSet<Attribute>> findSubset(AttributeSet attributeSet) {
-		HashSet<HashSet<Attribute>> result = new HashSet<>();
+	public static HashSet<AttributeSet> findSubset(AttributeSet attributeSet) {
+		HashSet<AttributeSet> result = new HashSet<>();
 
 		ArrayList<Attribute> myList = new ArrayList<>();
 		Iterator<Attribute> attrIterator = attributeSet.iterator();
 		while (attrIterator.hasNext()) {
 			myList.add(attrIterator.next());
 		}
-		HashSet<Attribute> newList = new HashSet<>();
+		AttributeSet newList = new AttributeSet();
 		allSubHelper(myList, newList, 0, result);
 
 		return result;
 	}
 
-	public static void allSubHelper(ArrayList<Attribute> myList, HashSet<Attribute> newList, int index,
-			HashSet<HashSet<Attribute>> result) {
+	public static void allSubHelper(ArrayList<Attribute> myList, AttributeSet newList, int index, HashSet<AttributeSet> result) {
 		if (index >= myList.size()) {
-			result.add(newList);
+			if (newList == null || newList.size() == 0){
+				
+			} else {
+				result.add(newList);
+			}
 		} else {
 			allSubHelper(myList, newList, index + 1, result);
-			HashSet<Attribute> newListAdded = new HashSet(newList);
-			newListAdded.add(myList.get(index));
+			AttributeSet newListAdded = new AttributeSet(newList);
+			newListAdded.addAttribute(myList.get(index));
 			allSubHelper(myList, newListAdded, index + 1, result);
 		}
 	}
 
-	public static Set<AttributeSet> decompose(AttributeSet attributeSet, Set<FunctionalDependency> functionalDependencies) {
+	public static Set<AttributeSet> decompose(AttributeSet attributeSet,
+			Set<FunctionalDependency> functionalDependencies) {
 		// If attribute set is null or functional dependencies are null
 		if (attributeSet == null || functionalDependencies == null) {
 			return null;
 		}
-		HashSet<HashSet<Attribute>> allSubSets = findSubset(attributeSet);
-		Iterator<HashSet<Attribute>> allSubSetIterator = allSubSets.iterator();
-		while(allSubSetIterator.hasNext()){
-			HashSet<Attribute> tempSet = allSubSetIterator.next();
-			Iterator<Attribute> tempSetIterator = tempSet.iterator();
-			while(tempSetIterator.hasNext()){
-				
-			}
+		Set<AttributeSet> result = new HashSet<AttributeSet>();
+		//test
+		System.out.println("calling findSubset with : " + attributeSet.toString());
+		HashSet<AttributeSet> allSubSets = findSubset(attributeSet);
+		System.out.println("Result is : " + allSubSets.toString());
+		
+		Iterator<AttributeSet> allSubSetIterator = allSubSets.iterator();
+		// For all SubSets
+		while (allSubSetIterator.hasNext()) {
 			
+			// Test
+			System.out.println("hello");
+			// Get a Subset
+			AttributeSet mySet = allSubSetIterator.next();
+			// Find its closure
+			AttributeSet closuredSet = closure(mySet, functionalDependencies);
+			// Check if the closure is the same as the original
+			// if not equal
+			if (!closuredSet.equals(mySet)) {
+				
+				allSubSets.add(closuredSet);
+				//Find the complement
+				Iterator<Attribute> closuredSetIterator = closuredSet.iterator();
+				Iterator<Attribute> mySetIterator = mySet.iterator();
+				AttributeSet newAttributes = new AttributeSet(attributeSet);
+				while (closuredSetIterator.hasNext()){
+					newAttributes.deleteAttribute(closuredSetIterator.next());
+				}
+				while (mySetIterator.hasNext()){
+					newAttributes.addAttribute(mySetIterator.next());
+				}
+				allSubSets.add(newAttributes);
+			}
 		}
-		return null;
+		return result;
 	}
 
 	/**
@@ -63,9 +91,9 @@ public class BCNF {
 		AttributeSet closure = new AttributeSet(attributeSet);
 		int closureSize;
 
-		// // Test
-		// System.out.println("Closure Function");
-		// System.out.println("AttributeSet: " + closure.toString());
+		 // Test
+		 System.out.println("Closure Function");
+		 System.out.println("Given: " + closure.toString());
 
 		do {
 			closureSize = closure.size();
@@ -101,8 +129,8 @@ public class BCNF {
 
 		} while (closureSize != closure.size());
 
-		// // Test
-		// System.out.println("--After: " + closure.toString());
+		 // Test
+		 System.out.println("After: " + closure.toString());
 		return closure;
 	}
 }
