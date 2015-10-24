@@ -52,36 +52,35 @@ public class BCNFTest {
         // A custom test written by aoisky
         AttributeSet attrs = new AttributeSet();
         attrs.addAttribute(new Attribute("a"));
-        attrs.addAttribute(new Attribute("c"));
-        attrs.addAttribute(new Attribute("b"));
-        attrs.addAttribute(new Attribute("d"));
-        attrs.addAttribute(new Attribute("e"));
-        attrs.addAttribute(new Attribute("f"));
-        attrs.addAttribute(new Attribute("g"));
+//        attrs.addAttribute(new Attribute("c"));
+//        attrs.addAttribute(new Attribute("b"));
+//        attrs.addAttribute(new Attribute("d"));
+//        attrs.addAttribute(new Attribute("e"));
+//        attrs.addAttribute(new Attribute("f"));
+//        attrs.addAttribute(new Attribute("g"));
 //        attrs.addAttribute(new Attribute("e"));
 
         Set<FunctionalDependency> fds = new HashSet<>();
         AttributeSet ind = new AttributeSet();
         AttributeSet dep = new AttributeSet();
-        ind.addAttribute(new Attribute("h"));
-        dep.addAttribute(new Attribute("b"));
+        ind.addAttribute(new Attribute("b"));
         dep.addAttribute(new Attribute("c"));
         FunctionalDependency fd = new FunctionalDependency(ind, dep);
         fds.add(fd);
-        ind = new AttributeSet();
-        dep = new AttributeSet();
-        ind.addAttribute(new Attribute("a"));
-        ind.addAttribute(new Attribute("h"));
-        dep.addAttribute(new Attribute("e"));
-        fd = new FunctionalDependency(ind, dep);
-        fds.add(fd);
-        ind = new AttributeSet();
-        dep = new AttributeSet();
-        ind.addAttribute(new Attribute("b"));
-        dep.addAttribute(new Attribute("h"));
-        dep.addAttribute(new Attribute("c"));
-        fd = new FunctionalDependency(ind, dep);
-        fds.add(fd);
+//        ind = new AttributeSet();
+//        dep = new AttributeSet();
+//        ind.addAttribute(new Attribute("a"));
+//        ind.addAttribute(new Attribute("h"));
+//        dep.addAttribute(new Attribute("e"));
+//        fd = new FunctionalDependency(ind, dep);
+//        fds.add(fd);
+//        ind = new AttributeSet();
+//        dep = new AttributeSet();
+//        ind.addAttribute(new Attribute("b"));
+//        dep.addAttribute(new Attribute("h"));
+//        dep.addAttribute(new Attribute("c"));
+//        fd = new FunctionalDependency(ind, dep);
+//        fds.add(fd);
 
         Set<AttributeSet> bcnf = BCNF.decompose(attrs, fds);
         

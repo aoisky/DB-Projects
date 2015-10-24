@@ -5,19 +5,20 @@ public class BCNF {
 	/**
 	 * Implement your algorithm here
 	 **/
+	// Reorganize input and call mydecompose helper function
+	public static HashSet<AttributeSet> decompose(AttributeSet attributeSet,
+			Set<FunctionalDependency> functionalDependencies) {
 
-	public static HashSet<AttributeSet> decompose(AttributeSet attributeSet, Set<FunctionalDependency> functionalDependencies) {
-		
 		HashSet<FunctionalDependency> myDependencies = new HashSet<FunctionalDependency>();
 		Iterator<FunctionalDependency> depIterator = functionalDependencies.iterator();
-		
-		while ( depIterator.hasNext()){
+
+		while (depIterator.hasNext()) {
 			FunctionalDependency dep = depIterator.next();
 			AttributeSet dependent = dep.dependent();
 			AttributeSet independent = dep.independent();
-			if (dependent.size() > 1){
+			if (dependent.size() > 1) {
 				Iterator<Attribute> dependentIterator = dependent.iterator();
-				while (dependentIterator.hasNext()){
+				while (dependentIterator.hasNext()) {
 					AttributeSet myNewDependentSet = new AttributeSet();
 					myNewDependentSet.addAttribute(dependentIterator.next());
 					FunctionalDependency newFd = new FunctionalDependency(independent, myNewDependentSet);
@@ -26,12 +27,13 @@ public class BCNF {
 			} else {
 				myDependencies.add(dep);
 			}
-			
+
 		}
 		return myDecompose(attributeSet, myDependencies);
-		
+
 	}
 
+	// function to generate all subsets by calling allSubHelper
 	public static HashSet<AttributeSet> findSubset(AttributeSet attributeSet) {
 		HashSet<AttributeSet> result = new HashSet<>();
 
@@ -46,6 +48,7 @@ public class BCNF {
 		return result;
 	}
 
+	// helper function for finding all subsets
 	public static void allSubHelper(ArrayList<Attribute> myList, AttributeSet newList, int index,
 			HashSet<AttributeSet> result) {
 		if (index >= myList.size()) {
@@ -62,10 +65,11 @@ public class BCNF {
 		}
 	}
 
+	//
 	public static HashSet<AttributeSet> myDecompose(AttributeSet attributeSet,
 			Set<FunctionalDependency> functionalDependencies) {
 		// If attribute set is null or functional dependencies are null
-		
+
 		HashSet<AttributeSet> result = new HashSet<AttributeSet>();
 		HashSet<AttributeSet> resultTwo = new HashSet<AttributeSet>();
 		if (attributeSet == null || functionalDependencies == null) {
@@ -73,11 +77,7 @@ public class BCNF {
 			return result;
 		}
 		boolean flag = true;
-//		HashSet<AttributeSet> result = new HashSet<AttributeSet>();
-//		HashSet<AttributeSet> resultTwo = new HashSet<AttributeSet>();
-		// //test
-		// System.out.println("calling findSubset with : " +
-		// attributeSet.toString());
+
 		HashSet<AttributeSet> allSubSets = findSubset(attributeSet);
 		HashSet<FunctionalDependency> myDependencies = new HashSet<FunctionalDependency>(functionalDependencies);
 		Iterator<FunctionalDependency> depIterator = myDependencies.iterator();
@@ -107,24 +107,11 @@ public class BCNF {
 			}
 		}
 		Iterator<FunctionalDependency> testdepIterator = myDependencies.iterator();
-		System.out.println("Dep size: " + myDependencies.size());
-		// if( myDependencies.size() == 0) {
-		// result.add(attributeSet);
-		// return result;
-		// }
-		String out = "";
-		while (testdepIterator.hasNext())
-			out += testdepIterator.next().toString() + "\t";
-		System.out.println("New Deps: " + out);
-
-		System.out.println("Subsets : " + allSubSets.toString());
 
 		Iterator<AttributeSet> allSubSetIterator = allSubSets.iterator();
 		// For all SubSets
 		while (allSubSetIterator.hasNext()) {
 
-			// Test
-			// System.out.println("hello");
 			// Get a Subset
 			AttributeSet mySet = allSubSetIterator.next();
 			// Find its closure
@@ -133,12 +120,7 @@ public class BCNF {
 			// if not equal
 			if (!closuredSet.equals(mySet) && !closuredSet.equals(attributeSet)) {
 				flag = false;
-				// Iterator<FunctionalDependency> newdepIterator =
-				// myDependencies.iterator();
-				// String out2 = "";
-				// while(newdepIterator.hasNext())
-				// out2 += newdepIterator.next().toString() + "\t";
-				//
+
 				// Find the complement
 				Iterator<Attribute> closuredSetIterator = closuredSet.iterator();
 				Iterator<Attribute> mySetIterator = mySet.iterator();
@@ -146,13 +128,10 @@ public class BCNF {
 				while (closuredSetIterator.hasNext()) {
 					newAttributes.deleteAttribute(closuredSetIterator.next());
 				}
-				// System.out.println("--del: " + newAttributes.toString());
 				while (mySetIterator.hasNext()) {
 					newAttributes.addAttribute(mySetIterator.next());
 				}
-				// System.out.println("--add: " + newAttributes.toString());
-				System.out.println("--calling 1: " + closuredSet.toString());
-				System.out.println("--calling 2: " + newAttributes.toString());
+
 				result = decompose(closuredSet, myDependencies);
 				resultTwo = decompose(newAttributes, myDependencies);
 				for (AttributeSet temp : resultTwo) {
@@ -167,12 +146,12 @@ public class BCNF {
 						result.add(temp);
 					}
 				}
-				// result.addAll(resultTwo);
+
 				break;
 			}
 		}
 		if (flag) {
-			System.out.println("++Result " + attributeSet.toString());
+
 			result.add(attributeSet);
 		}
 		return result;
@@ -190,10 +169,6 @@ public class BCNF {
 		// Initialize closure attribute set
 		AttributeSet closure = new AttributeSet(attributeSet);
 		int closureSize;
-
-		// Test
-		System.out.println("Closure Function");
-		System.out.println("Given: " + closure.toString());
 
 		do {
 			closureSize = closure.size();
@@ -229,8 +204,6 @@ public class BCNF {
 
 		} while (closureSize != closure.size());
 
-		// Test
-		System.out.println("After: " + closure.toString());
 		return closure;
 	}
 
@@ -240,8 +213,7 @@ public class BCNF {
 		if (attributeSet == null || functionalDependencies == null) {
 			return null;
 		}
-		// Test
-		System.out.println("Before: " + attributeSet.toString());
+
 		// Initialization
 		Map<Attribute, List<FunctionalDependency>> listMap = new HashMap<>();
 		Map<FunctionalDependency, Integer> countMap = new HashMap<>();
@@ -281,11 +253,11 @@ public class BCNF {
 				continue;
 			// For each FD in A
 			for (FunctionalDependency fd : fdList) {
-				// Count[W->Z] = COUNT[W->Z] - 1
+
 				countMap.put(fd, countMap.get(fd) - 1);
 				if (countMap.get(fd) == 0) {
 					AttributeSet addSet = new AttributeSet(fd.dependent());
-					// ADD = Z-NEWDEP
+
 					Iterator<Attribute> newDependencyIterator = newDependency.iterator();
 					while (newDependencyIterator.hasNext()) {
 						Attribute newDependencyAttr = newDependencyIterator.next();
@@ -306,7 +278,7 @@ public class BCNF {
 			}
 		}
 		// Test
-		System.out.println("After: " + newDependency.toString());
+
 		return newDependency;
 	}
 }
