@@ -32,13 +32,21 @@ public class BCNF {
 		}
 	}
 
-	public static Set<AttributeSet> decompose(AttributeSet attributeSet,
-			Set<FunctionalDependency> functionalDependencies) {
+	public static Set<AttributeSet> decompose(AttributeSet attributeSet, Set<FunctionalDependency> functionalDependencies) {
 		// If attribute set is null or functional dependencies are null
 		if (attributeSet == null || functionalDependencies == null) {
 			return null;
 		}
-
+		HashSet<HashSet<Attribute>> allSubSets = findSubset(attributeSet);
+		Iterator<HashSet<Attribute>> allSubSetIterator = allSubSets.iterator();
+		while(allSubSetIterator.hasNext()){
+			HashSet<Attribute> tempSet = allSubSetIterator.next();
+			Iterator<Attribute> tempSetIterator = tempSet.iterator();
+			while(tempSetIterator.hasNext()){
+				
+			}
+			
+		}
 		return null;
 	}
 
